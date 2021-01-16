@@ -30,8 +30,8 @@ class MdWaterWidget {
 		// add spacer
 		newStack.addSpacer(10);
 		// add welcome message to the panel
-		let text =  newStack.addText('ELBE-PEGEL MD');
-		text.font = Font.heavySystemFont(16);
+		let text =  newStack.addText('ELBE - PEGEL MAGDEBURG');
+		text.font = Font.heavySystemFont(12);
 	}
 
 	/**
