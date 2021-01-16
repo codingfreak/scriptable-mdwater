@@ -53,11 +53,10 @@ class MdWaterWidget {
 		} else {
 			valueText = currentValue.value;
 			timeText = currentValue.timestamp;
-		}			
-		let test = newStack.addText('Hello');
-		let text = newStack.addText(valueText);
+		}					
+		let text = newStack.addText(valueText.toString());
 		text.font = Font.mediumSystemFont(14);		
-		let subText = newStack.addText(timeText);
+		let subText = newStack.addText(timeText.toString());
 		subText.font = Font.lightSystemFont(10);	
 	}
 
