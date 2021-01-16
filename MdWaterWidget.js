@@ -1,7 +1,10 @@
 
 class MdWaterWidget {
 	
-	
+	/**
+	 * Start point of the widget. Be aware that a widget is meant to run only
+	 * one time and will be reloaded by the OS permanently.
+	 */
 	async run() {
 		let widget = await this.createWidget();
 		if (!config.runsInWidget) {
@@ -11,6 +14,10 @@ class MdWaterWidget {
 		Script.complete()
 	}
 
+	/**
+	 * Adds the static welcome stack at the top.
+	 * @param {*} widget The already created widget where to create the values panel.
+	 */
 	async addWelcomeStack(widget) {
 		let newStack = widget.addStack();				
 		newStack.setPadding(2,2,2,2);
@@ -27,6 +34,11 @@ class MdWaterWidget {
 		text.font = Font.heavySystemFont(16);
 	}
 
+	/**
+	 * Generates the UI element for holding values.
+	 * @param {*} widget The already created widget where to create the values panel.
+	 * @param {*} values The values which where read from the API.
+	 */
 	async addCurrentValueStack(widget, values) {
 		let newStack = widget.addStack();
 		newStack.setPadding(2,2,2,2);
@@ -42,24 +54,32 @@ class MdWaterWidget {
 			valueText = currentValue.value;
 			timeText = currentValue.timestamp;
 		}			
-		let text =  newStack.addText(valueText);
+		let text = newStack.addText(valueText);
 		text.font = Font.mediumSystemFont(14);		
-		let subText =  newStack.addText(timeText);
+		let subText = newStack.addText(timeText);
 		subText.font = Font.lightSystemFont(10);	
 	}
 
+	/**
+	 * Logic to create the complete widget.
+	 */
 	async createWidget() {
-		widget = new ListWidget();
+		let widget = new ListWidget();
 		widget.setPadding(2,2,2,2);
 		// create and format welcome panel
 		this.addWelcomeStack(widget);
 		// load values
-		values = await this.getValues();
+		let values = await this.getValues();
 		// create a panel for the current value
 		this.addCurrentValueStack(widget, values);
 		return widget;
 	}
 
+	/**
+	 * Retrieves an image from the image CDN and stores it locally to
+	 * cache the load.
+	 * @param {*} fileName The name of the image file without the path.
+	 */
 	async getImage(fileName) {
 		// check if image exists as local already
 		const fm = FileManager.local();
@@ -77,21 +97,27 @@ class MdWaterWidget {
 		return image;
 	}
 
+	/**
+	 * Retrieves the values from the API.
+	 */
 	async getValues() {
 		try {
 			const stationId = 'MAGDEBURG-STROMBR%C3%9CCKE';
 			const url = `https://www.pegelonline.wsv.de/webservices/rest-api/v2/stations/${stationId}/w/measurements.json`;
 			const req = new Request(url);
-			const json = req.loadJson();
+			const json = await req.loadJSON();
+			console.log(`Retrieved ${json.length} results.`);
 			return json;
 
 		} catch (e) {
+			console.error(e);
 			return { 'error': 'Error loading data.' };
 		}
 	}
 
 }
 
+// startup logic
 const widget = new MdWaterWidget();
 await widget.run();
 
