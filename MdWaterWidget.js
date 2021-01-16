@@ -7,6 +7,8 @@ class MdWaterWidget {
 	 */
 	async run() {
 		let widget = await this.createWidget();
+		widget.setPadding(0, 0, 0, 0);
+		widget.refreshAfterDate = new Date(Date.now() + 15*60*1000);		
 		if (!config.runsInWidget) {
 		  await widget.presentSmall()
 		}
@@ -16,10 +18,10 @@ class MdWaterWidget {
 
 	/**
 	 * Adds the static welcome stack at the top.
-	 * @param {*} widget The already created widget where to create the values panel.
+	 * @param {*} parent The parent in which the stack should be created.
 	 */
-	async addWelcomeStack(widget) {
-		let newStack = widget.addStack();				
+	async addWelcomeStack(parent) {
+		let newStack = parent.addStack();				
 		newStack.setPadding(2,2,2,2);
 		newStack.layoutHorizontally();
 		newStack.topAlignContent();		
@@ -36,11 +38,11 @@ class MdWaterWidget {
 
 	/**
 	 * Generates the UI element for holding values.
-	 * @param {*} widget The already created widget where to create the values panel.
+	 * @param {*} parent The parent in which the stack should be created.
 	 * @param {*} values The values which where read from the API.
 	 */
-	async addCurrentValueStack(widget, values) {
-		let newStack = widget.addStack();
+	async addCurrentValueStack(parent, values) {
+		let newStack = parent.addStack();
 		newStack.setPadding(2,2,2,2);
 		newStack.layoutVertically();
 		newStack.topAlignContent();	
@@ -60,8 +62,12 @@ class MdWaterWidget {
 		subText.font = Font.lightSystemFont(6);	
 	}
 
-
-	addTimelineChart(widget, values) {
+/**
+	 * Generates the UI element for holding values.
+	 * @param {*} parent The parent in which the stack should be created.
+	 * @param {*} values The values which where read from the API.
+	 */
+	addTimelineChartStack(parent, values) {
 		let timeline = values.sort(v => v.timestamp).map(v => v.value);
 		let chart = new LineChart(400, 120, timeline).configure((ctx, path) => {
 			ctx.opaque = false;
@@ -69,7 +75,7 @@ class MdWaterWidget {
 			ctx.addPath(path);
 			ctx.fillPath(path);
 		  }).getImage();
-		let chartStack = widget.addStack();
+		let chartStack = parent.addStack();
       	chartStack.setPadding(0, 0, 0, 0);
 		let img = chartStack.addImage(chart);
 		img.applyFittingContentMode();
@@ -81,14 +87,18 @@ class MdWaterWidget {
 	async createWidget() {
 		let widget = new ListWidget();
 		widget.setPadding(2,2,2,2);
+		let overallStack = widget.addStack();
+		overallStack.setPadding(14, 14, 0, 14);
+		overallStack.layoutVertically();
+		overallStack.topAlignContent();	
 		// create and format welcome panel
-		this.addWelcomeStack(widget);
+		this.addWelcomeStack(overallStack);
 		// load values
 		let values = await this.getValues();
 		// create a panel for the current value
-		this.addCurrentValueStack(widget, values);
+		this.addCurrentValueStack(overallStack, values);
 		// add chart		
-		this.addTimelineChart(widget, values);
+		this.addTimelineChartStack(overallStack, values);
 		return widget;
 	}
 
