@@ -54,6 +54,7 @@ class MdWaterWidget {
 			valueText = currentValue.value;
 			timeText = currentValue.timestamp;
 		}			
+		let test = newStack.addText('Hello');
 		let text = newStack.addText(valueText);
 		text.font = Font.mediumSystemFont(14);		
 		let subText = newStack.addText(timeText);
@@ -67,7 +68,7 @@ class MdWaterWidget {
 		let widget = new ListWidget();
 		widget.setPadding(2,2,2,2);
 		// create and format welcome panel
-		this.addWelcomeStack(widget);
+		//this.addWelcomeStack(widget);
 		// load values
 		let values = await this.getValues();
 		// create a panel for the current value
