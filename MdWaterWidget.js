@@ -1,6 +1,5 @@
-
 class MdWaterWidget {
-	
+
 	/**
 	 * Start point of the widget. Be aware that a widget is meant to run only
 	 * one time and will be reloaded by the OS permanently.
@@ -8,9 +7,9 @@ class MdWaterWidget {
 	async run() {
 		let widget = await this.createWidget();
 		widget.setPadding(0, 0, 0, 0);
-		widget.refreshAfterDate = new Date(Date.now() + 15*60*1000);		
+		widget.refreshAfterDate = new Date(Date.now() + 15 * 60 * 1000);
 		if (!config.runsInWidget) {
-		  await widget.presentSmall()
+			await widget.presentSmall()
 		}
 		Script.setWidget(widget)
 		Script.complete()
@@ -21,10 +20,10 @@ class MdWaterWidget {
 	 * @param {*} parent The parent in which the stack should be created.
 	 */
 	async addWelcomeStack(parent) {
-		let newStack = parent.addStack();				
-		newStack.setPadding(2,2,2,2);
+		let newStack = parent.addStack();
+		newStack.setPadding(5, 5, 5, 5);
 		newStack.layoutHorizontally();
-		newStack.topAlignContent();		
+		newStack.topAlignContent();
 		// add logo to the panel
 		const codingfreaksLogo = await this.getImage('codingfreaks.jpg');
 		let logoImage = newStack.addImage(codingfreaksLogo);
@@ -32,7 +31,7 @@ class MdWaterWidget {
 		// add spacer
 		newStack.addSpacer(10);
 		// add welcome message to the panel
-		let text =  newStack.addText('ELBE - PEGEL MAGDEBURG');
+		let text = newStack.addText('ELBE - PEGEL MAGDEBURG');
 		text.font = Font.heavySystemFont(12);
 	}
 
@@ -43,9 +42,9 @@ class MdWaterWidget {
 	 */
 	async addCurrentValueStack(parent, values) {
 		let newStack = parent.addStack();
-		newStack.setPadding(2,2,2,2);
+		newStack.setPadding(5, 5, 5, 5);
 		newStack.layoutVertically();
-		newStack.topAlignContent();	
+		newStack.topAlignContent();
 		let currentValue = values[values.length - 1];
 		let valueText = '';
 		let timeText = '';
@@ -55,14 +54,14 @@ class MdWaterWidget {
 		} else {
 			valueText = currentValue.value;
 			timeText = currentValue.timestamp;
-		}					
+		}
 		let text = newStack.addText(valueText.toString());
-		text.font = Font.mediumSystemFont(24);		
+		text.font = Font.mediumSystemFont(24);
 		let subText = newStack.addText(new Date(timeText).toLocaleString());
-		subText.font = Font.lightSystemFont(6);	
+		subText.font = Font.lightSystemFont(6);
 	}
 
-/**
+	/**
 	 * Generates the UI element for holding values.
 	 * @param {*} parent The parent in which the stack should be created.
 	 * @param {*} values The values which where read from the API.
@@ -74,9 +73,9 @@ class MdWaterWidget {
 			ctx.setFillColor(new Color("888888", .25));
 			ctx.addPath(path);
 			ctx.fillPath(path);
-		  }).getImage();
+		}).getImage();
 		let chartStack = parent.addStack();
-      	chartStack.setPadding(0, 0, 0, 0);
+		chartStack.setPadding(0, 0, 0, 0);
 		let img = chartStack.addImage(chart);
 		img.applyFittingContentMode();
 	}
@@ -86,11 +85,11 @@ class MdWaterWidget {
 	 */
 	async createWidget() {
 		let widget = new ListWidget();
-		widget.setPadding(2,2,2,2);
+		widget.setPadding(2, 2, 2, 2);
 		let overallStack = widget.addStack();
-		overallStack.setPadding(14, 14, 0, 14);
+		overallStack.setPadding(0, 0, 0, 0);
 		overallStack.layoutVertically();
-		overallStack.topAlignContent();	
+		overallStack.topAlignContent();
 		// create and format welcome panel
 		this.addWelcomeStack(overallStack);
 		// load values
@@ -115,7 +114,7 @@ class MdWaterWidget {
 		if (fm.fileExists(path)) {
 			// yes the image was found on the phone -> use it
 			return fm.readImage(path);
-		}		
+		}
 		// we have to load the image from the cloud
 		const imageUrl = `https://devdeer.blob.core.windows.net/shared/codingfreaks/images/${fileName}`;
 		const req = new Request(imageUrl);
@@ -138,67 +137,72 @@ class MdWaterWidget {
 
 		} catch (e) {
 			console.error(e);
-			return { 'error': 'Error loading data.' };
+			return {
+				'error': 'Error loading data.'
+			};
 		}
 	}
 
 }
 
+/**
+ * Logic to render a line chart.
+ * (taken from https://gist.github.com/kevinkub/46caebfebc7e26be63403a7f0587f664).
+ */
 class LineChart {
 
 	constructor(width, height, values) {
-	  this.ctx = new DrawContext()
-	  this.ctx.size = new Size(width, height)
-	  this.values = values;
+		this.ctx = new DrawContext()
+		this.ctx.size = new Size(width, height)
+		this.values = values;
 	}
-	
+
 	_calculatePath() {
-	  let maxValue = Math.max(...this.values);
-	  let minValue = Math.min(...this.values);
-	  let difference = maxValue - minValue;
-	  let count = this.values.length;
-	  let step = this.ctx.size.width / (count - 1);
-	  let points = this.values.map((current, index, all) => {
-		  let x = step*index
-		  let y = this.ctx.size.height - (current - minValue) / difference * this.ctx.size.height;
-		  return new Point(x, y)
-	  });
-	  return this._getSmoothPath(points);
+		let maxValue = Math.max(...this.values);
+		let minValue = Math.min(...this.values);
+		let difference = maxValue - minValue;
+		let count = this.values.length;
+		let step = this.ctx.size.width / (count - 1);
+		let points = this.values.map((current, index, all) => {
+			let x = step * index
+			let y = this.ctx.size.height - (current - minValue) / difference * this.ctx.size.height;
+			return new Point(x, y)
+		});
+		return this._getSmoothPath(points);
 	}
-		
+
 	_getSmoothPath(points) {
-	  let path = new Path()
-	  path.move(new Point(0, this.ctx.size.height));
-	  path.addLine(points[0]);
-	  for(var i = 0; i < points.length-1; i ++) {
-		let xAvg = (points[i].x + points[i+1].x) / 2;
-		let yAvg = (points[i].y + points[i+1].y) / 2;
-		let avg = new Point(xAvg, yAvg);
-		let cp1 = new Point((xAvg + points[i].x) / 2, points[i].y);
-		let next = new Point(points[i+1].x, points[i+1].y);
-		let cp2 = new Point((xAvg + points[i+1].x) / 2, points[i+1].y);
-		path.addQuadCurve(avg, cp1);
-		path.addQuadCurve(next, cp2);
-	  }
-	  path.addLine(new Point(this.ctx.size.width, this.ctx.size.height))
-	  path.closeSubpath()
-	  return path;
+		let path = new Path()
+		path.move(new Point(0, this.ctx.size.height));
+		path.addLine(points[0]);
+		for (var i = 0; i < points.length - 1; i++) {
+			let xAvg = (points[i].x + points[i + 1].x) / 2;
+			let yAvg = (points[i].y + points[i + 1].y) / 2;
+			let avg = new Point(xAvg, yAvg);
+			let cp1 = new Point((xAvg + points[i].x) / 2, points[i].y);
+			let next = new Point(points[i + 1].x, points[i + 1].y);
+			let cp2 = new Point((xAvg + points[i + 1].x) / 2, points[i + 1].y);
+			path.addQuadCurve(avg, cp1);
+			path.addQuadCurve(next, cp2);
+		}
+		path.addLine(new Point(this.ctx.size.width, this.ctx.size.height))
+		path.closeSubpath()
+		return path;
 	}
-	
+
 	configure(fn) {
-	  let path = this._calculatePath()
-	  if(fn) {
-		fn(this.ctx, path);
-	  } else {
-		this.ctx.addPath(path);
-		this.ctx.fillPath(path);
-	  }
-	  return this.ctx;
+		let path = this._calculatePath()
+		if (fn) {
+			fn(this.ctx, path);
+		} else {
+			this.ctx.addPath(path);
+			this.ctx.fillPath(path);
+		}
+		return this.ctx;
 	}
-  
-  }
+
+}
 
 // startup logic
 const widget = new MdWaterWidget();
 await widget.run();
-
