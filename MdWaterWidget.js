@@ -33,17 +33,19 @@ class MdWaterWidget {
 		newStack.layoutVertically();
 		newStack.topAlignContent();	
 		let currentValue = values[values.length - 1];
-		let text =  newStack.addText('');
-		text.font = Font.mediumSystemFont(14);		
-		let subText =  newStack.addText('');
-		subText.font = Font.lightSystemFont(10);	
+		let valueText = '';
+		let timeText = '';
 		if (currentValue.error) {
-			text.text = ':-(';
-			subText.text = 'Fehler beim Laden';
+			valueText = ':-(';
+			timeText = 'Fehler beim Laden';
 		} else {
-			text.text = currentValue.value;
-			subText.text = currentValue.timestamp;
+			valueText = currentValue.value;
+			timeText = currentValue.timestamp;
 		}			
+		let text =  newStack.addText(valueText);
+		text.font = Font.mediumSystemFont(14);		
+		let subText =  newStack.addText(timeText);
+		subText.font = Font.lightSystemFont(10);	
 	}
 
 	async createWidget() {
