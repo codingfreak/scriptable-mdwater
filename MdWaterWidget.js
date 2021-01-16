@@ -1,9 +1,7 @@
 
 class MdWaterWidget {
 	
-	_widget;
-	_values;
-
+	
 	async run() {
 		let widget = await this.createWidget();
 		if (!config.runsInWidget) {
@@ -13,8 +11,8 @@ class MdWaterWidget {
 		Script.complete()
 	}
 
-	async addWelcomeStack() {
-		let newStack = _widget.addStack();				
+	async addWelcomeStack(widget) {
+		let newStack = widget.addStack();				
 		newStack.setPadding(2,2,2,2);
 		newStack.layoutHorizontally();
 		newStack.topAlignContent();		
@@ -29,12 +27,12 @@ class MdWaterWidget {
 		text.font = Font.heavySystemFont(16);
 	}
 
-	async addCurrentValueStack() {
-		let newStack = list.addStack();
+	async addCurrentValueStack(widget, values) {
+		let newStack = widget.addStack();
 		newStack.setPadding(2,2,2,2);
 		newStack.layoutVertically();
 		newStack.topAlignContent();	
-		let currentValue = this._values[this._values.length - 1];
+		let currentValue = values[values.length - 1];
 		let text =  newStack.addText('');
 		text.font = Font.mediumSystemFont(14);		
 		let subText =  newStack.addText('');
@@ -49,15 +47,15 @@ class MdWaterWidget {
 	}
 
 	async createWidget() {
-		this._widget = new ListWidget();
-		_widget.setPadding(2,2,2,2);
+		widget = new ListWidget();
+		widget.setPadding(2,2,2,2);
 		// create and format welcome panel
-		this.addWelcomeStack();
+		this.addWelcomeStack(widget);
 		// load values
-		this._values = await this.getValues();
+		values = await this.getValues();
 		// create a panel for the current value
-		this.addCurrentValueStack();
-		return list;
+		this.addCurrentValueStack(widget, values);
+		return widget;
 	}
 
 	async getImage(fileName) {
