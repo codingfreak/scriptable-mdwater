@@ -55,9 +55,9 @@ class MdWaterWidget {
 			timeText = currentValue.timestamp;
 		}					
 		let text = newStack.addText(valueText.toString());
-		text.font = Font.mediumSystemFont(14);		
-		let subText = newStack.addText(timeText.toString());
-		subText.font = Font.lightSystemFont(10);	
+		text.font = Font.mediumSystemFont(24);		
+		let subText = newStack.addText(new Date(timeText).toLocaleString());
+		subText.font = Font.lightSystemFont(6);	
 	}
 
 	/**
@@ -67,7 +67,7 @@ class MdWaterWidget {
 		let widget = new ListWidget();
 		widget.setPadding(2,2,2,2);
 		// create and format welcome panel
-		//this.addWelcomeStack(widget);
+		this.addWelcomeStack(widget);
 		// load values
 		let values = await this.getValues();
 		// create a panel for the current value
