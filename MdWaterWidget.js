@@ -27,7 +27,7 @@ class MdWaterWidget {
 		// add logo to the panel
 		const codingfreaksLogo = await this.getImage('codingfreaks.jpg');
 		let logoImage = newStack.addImage(codingfreaksLogo);
-		logoImage.imageSize = new Size(16, 16);
+		logoImage.imageSize = new Size(32, 32);
 		// add spacer
 		newStack.addSpacer(10);
 		// add welcome message to the panel
@@ -74,6 +74,7 @@ class MdWaterWidget {
 			ctx.addPath(path);
 			ctx.fillPath(path);
 		}).getImage();
+		parent.addSpacer(23);
 		let chartStack = parent.addStack();
 		chartStack.setPadding(0, 0, 0, 0);
 		let img = chartStack.addImage(chart);
